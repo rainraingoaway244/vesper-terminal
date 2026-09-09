@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>VESPER ARCHIVE // SECURITY TERMINAL</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:#050505;color:#aaa;font-family:"Courier New",monospace}
+body{min-height:100vh;display:flex;align-items:center;justify-content:center;overflow:hidden}
+body:after{content:"";position:fixed;inset:0;pointer-events:none;background:repeating-linear-gradient(#fff0 0,#fff0 3px,#fff1 4px);opacity:.3}
+main{width:min(900px,92vw);min-height:590px;background:#090909;border:1px solid #444;padding:28px 30px;position:relative;box-shadow:0 0 45px #fff1,inset 0 0 70px #fff1}
+header{display:flex;justify-content:space-between;border-bottom:1px solid #333;padding-bottom:14px;margin-bottom:28px;font-size:12px;letter-spacing:1.5px;color:#777}
+h1{font-size:clamp(21px,4vw,34px);letter-spacing:4px;color:#ddd;margin:0 0 8px}
+.sub{font-size:12px;color:#666;letter-spacing:1px;margin-bottom:32px}
+.line{margin:8px 0;color:#777}
+.prompt{margin-top:45px;border-top:1px solid #292929;padding-top:24px}
+label{display:block;font-size:12px;color:#999;margin-bottom:14px;letter-spacing:1px}
+.row{display:flex;gap:12px}
+input{flex:1;background:#030303;color:#ddd;border:1px solid #555;outline:0;padding:14px;font:inherit;letter-spacing:1px}
+input:focus{border-color:#aaa;box-shadow:0 0 10px #fff1}
+button,a{background:#111;color:#bbb;border:1px solid #555;padding:14px 20px;font:inherit;letter-spacing:1px;cursor:pointer;text-decoration:none;display:inline-block}
+button:hover,a:hover{background:#1b1b1b;color:#fff;border-color:#888}
+#output{margin-top:22px;min-height:115px;white-space:pre-wrap;line-height:1.7;font-size:13px}
+.dim{color:#666}.danger{color:#aaa}.success{color:#ddd}
+.blink{animation:blink 1s steps(1) infinite}@keyframes blink{50%{opacity:0}}
+.hidden{display:none}.reward{margin-top:25px;border-top:1px solid #333;padding-top:22px}
+.footer{position:absolute;bottom:14px;left:30px;right:30px;display:flex;justify-content:space-between;color:#444;font-size:9px;letter-spacing:1px}
+@media(max-width:600px){main{min-height:620px;padding:22px 18px}.row{flex-direction:column}.row button{width:100%}.footer{left:18px;right:18px}}
+</style>
+</head>
+<body>
+<main>
+<header><span>VESPER ARCHIVE // SECURITY TERMINAL</span><span>NODE 04 // <span id="clock">--:--:--</span></span></header>
+<h1>RESTRICTED RECORD</h1>
+<div class="sub">CASE 001 // LUNAR ACTIVITY // RECORD 001-C</div>
+<div class="line">CONNECTION................. ESTABLISHED</div>
+<div class="line">ARCHIVE STATUS............. ONLINE</div>
+<div class="line">RECORD STATUS.............. LOCKED</div>
+<div class="line">AUTHORIZATION.............. REQUIRED</div>
+
+<div class="prompt">
+<label for="answer">ENTER RECOVERED DATE:</label>
+<div class="row">
+<input id="answer" autocomplete="off" spellcheck="false" placeholder="DD MONTH YYYY">
+<button id="verify">VERIFY</button>
+</div>
+<div id="output" class="dim">Awaiting input<span class="blink">_</span></div>
+</div>
+
+<div id="reward" class="reward hidden">
+<div class="success">ACCESS GRANTED.</div>
+<p>RECORD 001-C VERIFIED.</p>
+<p class="dim">One associated record has been recovered.</p>
+<a id="continue" href="#" target="_blank">OPEN RECOVERED RECORD</a>
+</div>
+
+<div class="footer"><span>V.A. // 1987</span><span>UNAUTHORIZED ACCESS IS LOGGED</span></div>
+</main>
+
+<script>
+const accepted=["06 NOVEMBER 1987","6 NOVEMBER 1987","06 NOV 1987","6 NOV 1987"];
+const nextURL="https://example.com"; // CHANGE THIS to your next page/QR destination
+const input=document.getElementById("answer"),verify=document.getElementById("verify"),output=document.getElementById("output"),reward=document.getElementById("reward"),cont=document.getElementById("continue");
+let attempts=0;
+function norm(s){return s.trim().replace(/\s+/g," ").toUpperCase()}
+function msg(text,cls){output.className=cls;output.textContent="";let i=0,t=setInterval(()=>{output.textContent+=text[i++]||"";if(i>=text.length)clearInterval(t)},18)}
+function check(){
+ attempts++; const v=norm(input.value);
+ if(!v){msg("INPUT REQUIRED.\n\nTHE ARCHIVE CANNOT VERIFY AN EMPTY RECORD.","danger");return}
+ msg("INPUT RECEIVED.\n\nCOMPARING ARCHIVE RECORDS............","dim");
+ setTimeout(()=>{
+  if(accepted.includes(v)){
+   msg("MATCH CONFIRMED.\n\nRECORD 001-C AUTHENTICATED.\n\nACCESS GRANTED.","success");
+   setTimeout(()=>{reward.classList.remove("hidden");cont.href=nextURL},1300);
+  }else{
+   let x="NO MATCH.\n\nACCESS DENIED.\n\nTHE DATE WAS NOT RECOGNIZED.";
+   if(attempts===3)x+="\n\nTHREE FAILED ATTEMPTS.\n\nARE YOU CERTAIN YOU REMEMBER THIS CORRECTLY?";
+   if(attempts>=5)x+="\n\nFIVE FAILED ATTEMPTS.\n\n...\n\nCONTINUE.";
+   msg(x,"danger");
+  }
+ },1100);
+}
+verify.onclick=check;input.onkeydown=e=>{if(e.key==="Enter")check()};
+function clock(){document.getElementById("clock").textContent=new Date().toLocaleTimeString("en-GB")}
+clock();setInterval(clock,1000);
+</script>
+</body>
+</html>
