@@ -71,7 +71,7 @@ function check(){
  setTimeout(()=>{
   if(accepted.includes(v)){
    msg("MATCH CONFIRMED.\n\nRECORD 001-C AUTHENTICATED.\n\nACCESS GRANTED.","success");
-   setTimeout(()=>{reward.classList.remove("hidden");cont.href=nextURL},1300);
+   setTimeout(()=>{window.location.href=nextURL},1300);
   }else{
    let x="NO MATCH.\n\nACCESS DENIED.\n\nTHE DATE WAS NOT RECOGNIZED.";
    if(attempts===3)x+="\n\nTHREE FAILED ATTEMPTS.\n\nARE YOU CERTAIN YOU REMEMBER THIS CORRECTLY?";
